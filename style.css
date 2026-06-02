@@ -1,0 +1,119 @@
+html, body { 
+    height: 100%; 
+    margin: 0; 
+    background-color: #f8f9fa; 
+}
+
+/* Πρόσθεσε το !important για να επιβάλλεις την αλλαγή */
+/* Η καινούργια μας ρύθμιση */
+.page { 
+    display: none; 
+}
+.page.active { 
+    display: flex !important; 
+    flex-direction: column;
+}
+
+/* Αναγκάζουμε τη σελίδα να έχει ύψος */
+#dest-details-page.active {
+    display: flex !important;
+    min-height: 100vh !important;
+    background-color: white !important;
+}
+/* Διορθώνει το layout για το Sidebar */
+#admin-approvals {
+    display: none; /* Κρυμμένο από προεπιλογή */
+    flex-direction: row !important; /* Αναγκαστικά οριζόντιο */
+    width: 100%;
+}
+#admin-approvals.active {
+    display: flex !important;
+}
+
+/* Το αρχικό μέγεθος για όλες τις σελίδες */
+#page-container {
+    max-width: 56rem; /* Αυτό αντιστοιχεί στο max-w-4xl */
+    margin: 0 auto;
+    transition: max-width 0.3s ease;
+}
+
+/* Πρόσθεσε αυτό στο <style> tag σου για να δώσεις elite αίσθηση */
+.elite-profile-container {
+    padding: 3rem;
+    gap: 3rem;
+    background-color: #f8fafc; /* Slate-50 */
+}
+
+.elite-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 2rem; /* Πιο έντονα στρογγυλεμένες γωνίες */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+/* Κάνει τα inputs να φαίνονται όμορφα και να μην χαλάνε τη στοίχιση */
+input {
+    padding: 2px 5px !important;
+    border-radius: 4px !important;
+    border: 1px solid #d1d5db !important; /* border-gray-300 */
+    font-size: 0.875rem !important; /* text-sm */
+    width: 100% !important;
+}
+
+#review-modal {
+    position: fixed !important;
+    z-index: 9999 !important;
+    display: none; /* θα το χειρίζεσαι με την class hidden */
+}
+#review-modal.active {
+    display: flex !important;
+}
+
+#dest-details-page {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: white !important;
+    z-index: 999999 !important;
+    overflow-y: auto !important;
+    display: none; /* Κρυμμένο από προεπιλογή */
+}
+
+#dest-details-page.active {
+    display: flex !important;
+}
+
+/* Για να φαίνεται το κείμενο σαν σε περιοδικό */
+#d-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #334155;
+    font-style: italic;
+}
+
+#d-title {
+    color: #92400e; /* Χρυσό χρώμα για τον τίτλο */
+    letter-spacing: -0.05em;
+    margin-bottom: 2rem;
+}
+
+#sidebar {
+    z-index: 10; /* Το sidebar μένει χαμηλά */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+}
+
+.page {
+    z-index: 20; /* Οι σελίδες περιεχομένου είναι πάντα από πάνω */
+    position: relative;
+}
+
+button {
+    pointer-events: auto; /* Διασφαλίζει ότι το κουμπί δέχεται το κλικ */
+    position: relative;
+    z-index: 30;
+}

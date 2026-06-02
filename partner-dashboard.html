@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Συνεργάτη | EliteRhodes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 flex h-screen font-sans">
+
+    <aside class="w-1/4 bg-white p-6 border-r shadow-lg flex flex-col">
+        <h2 class="text-xl font-bold mb-6 text-slate-800">Το Προφίλ μου</h2>
+        <div id="profile-details" class="space-y-4 text-sm text-slate-600 mb-8">
+    <p><strong>Όνομα Συνεργάτη:</strong> <input id="p-name" class="w-full border-b bg-transparent" value="--"></p>
+    
+    <p><strong>Όνομα Επιχείρησης:</strong> <input id="p-business" class="w-full border-b bg-transparent" value="--"></p>
+    
+    <p><strong>Κατηγορία:</strong>
+    <select id="p-category" class="w-full border-b bg-transparent p-1">
+        <option value="">Επίλεξε κατηγορία...</option>
+        <option value="Experiences">Experiences</option>
+        <option value="Childcare">Childcare</option>
+        <option value="Transfers">Transfers</option>
+        <option value="Safaris">Safaris</option>
+        <option value="Villa">Villa</option>
+        <option value="Wellness">Wellness</option>
+    </select>
+</p>
+    
+    <p><strong>Διεύθυνση:</strong> <input id="p-address" class="w-full border-b bg-transparent" value="--"></p>
+    <p><strong>Email:</strong> <span id="p-email" class="block font-bold">--</span></p>
+    <p><strong>Τηλέφωνο:</strong> <input id="p-phone" class="w-full border-b bg-transparent" value="--"></p>
+    
+    <button onclick="saveProfile()" class="w-full bg-yellow-600 text-white p-3 mt-4 rounded-xl font-bold hover:bg-yellow-700">
+        Αποθήκευση Στοιχείων
+    </button>
+</div>
+   <button onclick="window.location.href='index.html?stay=true'" 
+        class="flex items-center text-slate-500 hover:text-slate-800 transition text-sm w-full text-left">
+    <span>⬅️ back</span>
+</button>
+    <button onclick="logout()" class="flex items-center text-red-600 hover:text-red-800 transition text-sm font-bold">
+        <span>🚪 Αποσύνδεση</span>
+    </button>
+</div>
+    </aside>
+
+    <main class="w-3/4 p-8 overflow-y-auto">
+        <h1 id="welcome-message" class="text-3xl font-bold mb-8 text-slate-900">Καλώς ήρθες!</h1>
+
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="bg-green-600 text-white p-6 rounded-2xl shadow-lg">
+                <p class="text-sm opacity-80">Συνολικά Κέρδη</p>
+                <h3 class="text-2xl font-bold">€<span id="total-earnings">0.00</span></h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                <p class="text-sm text-slate-500">Ενεργές Κρατήσεις</p>
+                <h3 class="text-2xl font-bold text-slate-800" id="active-bookings-count">0</h3>
+            </div>
+    
+
+<div id="support-form" class="hidden mt-4 p-4 bg-white border rounded-xl shadow-lg">
+    <textarea id="admin-message" class="w-full p-2 border rounded" placeholder="Γράψε το μήνυμά σου..."></textarea>
+    <button onclick="sendToAdmin()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded">Αποστολή</button>
+</div>
+        </div>
+
+        <section class="mb-10">
+            <h3 class="text-lg font-bold mb-4 text-slate-700">Νέες Κρατήσεις</h3>
+            <div id="partner-bookings-list" class="grid gap-4"></div>
+        <section class="mt-10 bg-white p-8 rounded-2xl shadow-sm border">
+    <h3 class="text-xl font-bold mb-6 text-slate-800">Ιστορικό Κρατήσεων</h3>
+    <div id="booking-history" class="space-y-4">
+        </div>
+</section>
+
+<section class="mt-10 bg-white p-8 rounded-2xl shadow-sm border">
+    <h3 class="text-xl font-bold mb-6 text-slate-800">Κριτικές Πελατών</h3>
+    <div id="reviews-list" class="space-y-6">
+        </div>
+</section>
+
+        </section>
+
+       <section class="bg-white p-8 rounded-2xl shadow-sm border">
+    <button onclick="toggleForm()" class="w-full flex justify-between items-center text-xl font-bold text-slate-800">
+        <span>Προσθήκη Νέας Υπηρεσίας</span>
+        <span id="toggle-icon">➕</span>
+    </button>
+
+    <div id="service-form" class="hidden mt-6">
+        <div class="grid grid-cols-2 gap-4">
+            <input id="new-service-title" placeholder="Τίτλος Υπηρεσίας" class="p-3 border rounded-xl">
+            <select id="new-service-price-type" class="p-3 border rounded-xl">
+                <option value="fixed">Fixed Τιμή</option>
+                <option value="per_person">Ανά Άτομο</option>
+            </select>
+            <input id="new-service-price" type="number" placeholder="Τιμή (€)" class="p-3 border rounded-xl">
+            <textarea id="new-service-desc" placeholder="Περιγραφή..." class="p-3 border rounded-xl col-span-2"></textarea>
+        </div>
+        <div class="mt-4">
+            <label class="block text-sm font-bold mb-2">Ανέβασμα 3 Φωτογραφιών:</label>
+            <input type="file" id="new-service-images" accept="image/*" multiple class="w-full p-2 border rounded-xl">
+        </div>
+        <button onclick="submitForApproval()" class="mt-6 w-full bg-blue-600 text-white p-4 rounded-xl font-bold hover:bg-blue-700">
+            Υποβολή για Έγκριση
+        </button>
+    </div>
+</section>
+    </main>
+
+<script src="js/services/dashboard.js"></script>    <script>
+        window.onload = () => {
+            if (typeof loadPartnerBookings === 'function') loadPartnerBookings();
+            if (typeof loadProfile === 'function') loadProfile();
+        };
+    </script>
+</body>
+</html>

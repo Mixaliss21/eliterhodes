@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* Κρύβουμε τα πάντα από προεπιλογή */
+    .page { display: none; }
+    .page.active { display: flex !important; flex-direction: column; }   
+    /* Το Admin Panel πάνω από όλα */
+    #admin-approvals {
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: white !important;
+        z-index: 99999 !important;
+        overflow-y: auto;
+    }
+</style>
+<style>
+    /* Βεβαιωνόμαστε ότι το modal είναι πάνω από το Admin Panel */
+    #customer-modal {
+        z-index: 999999 !important;
+    }
+</style>
+<style>
+    /* Αυτό επιβάλλει την εμφάνιση της σελίδας λεπτομερειών */
+    #dest-details-page[style*="display: block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        z-index: 999999 !important;
+    }
+</style>
+</head>
+<body class="bg-slate-100 font-serif">
+    <div id="page-container" class="max-w-4xl mx-auto min-h-screen bg-white shadow-xl md:rounded-3xl p-6">
+    <div class="wrapper" style="display: flex;"></div>
+    <header class="relative flex flex-col items-center border-b pb-6 mb-6">
+        <div class="absolute right-0 top-0 cursor-pointer" onclick="renderProfile()">
+            <i class="fa-solid fa-address-card text-2xl text-yellow-600"></i>
+        </div>
+        <img src="logo.png" alt="Logo" class="h-24 object-contain cursor-pointer" onclick="showPage('home-page')">
+    </header>
+
+    <div id="home-page" class="page active flex flex-col space-y-6">
+        <main class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div onclick="showMarketplace('Experiences')" class="p-6 bg-slate-50 rounded-2xl text-center cursor-pointer hover:bg-yellow-100"><i class="fa-solid fa-ship text-3xl text-yellow-600 mb-2"></i><p class="font-bold">Experiences</p></div>
+            <div onclick="showMarketplace('Childcare')" class="p-6 bg-slate-50 rounded-2xl text-center cursor-pointer hover:bg-yellow-100"><i class="fa-solid fa-baby text-3xl text-yellow-600 mb-2"></i><p class="font-bold">Childcare</p></div>
+            <div onclick="showMarketplace('Transfers')" class="p-6 bg-slate-50 rounded-2xl text-center cursor-pointer hover:bg-yellow-100"><i class="fa-solid fa-van-shuttle text-3xl text-yellow-600 mb-2"></i><p class="font-bold">Transfers</p></div>
+            <div onclick="showMarketplace('Safaris')" class="p-6 bg-slate-50 rounded-2xl text-center cursor-pointer hover:bg-yellow-100"><i class="fa-solid fa-motorcycle text-3xl text-yellow-600 mb-2"></i><p class="font-bold">Safaris</p></div>
+            <div onclick="showMarketplace('Villa')" class="p-6 bg-slate-50 rounded-2xl text-center cursor-pointer hover:bg-yellow-100"><i class="fa-solid fa-utensils text-3xl text-yellow-600 mb-2"></i><p class="font-bold">Villa</p></div>
+            <div onclick="showMarketplace('Wellness')" class="p-6 bg-slate-50 rounded-2xl text-center cursor-pointer hover:bg-yellow-100"><i class="fa-solid fa-spa text-3xl text-yellow-600 mb-2"></i><p class="font-bold">Wellness</p></div>
+            <div onclick="showDestinationsPage()" class="p-6 bg-slate-50 rounded-2xl text-center cursor-pointer hover:bg-yellow-100">
+    <i class="fa-solid fa-map-location-dot text-3xl text-yellow-600 mb-2"></i>
+    <p class="font-bold">Must Visit</p>
+    </div>
+ </main>
+</div> 
+<div id="destinations-page" class="page hidden flex-col p-8">
+    <button onclick="showPage('home-page')" class="mb-4 text-slate-400 text-left">
+        <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+    <h2 class="text-2xl font-bold mb-6">Must Visit Destinations</h2>
+    
+    <div id="destinations-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    </div>
+</div>
+    <div id="service-marketplace" class="page hidden flex-col p-8">
+    
+  <button onclick="showPage('home-page')" class="mb-4 text-slate-400 text-left"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <h2 id="cat-title" class="text-2xl font-bold mb-6"></h2>
+            <div id="cat-items" class="grid grid-cols-1 gap-4"></div>
+        </div>
+
+        <div id="login-page" class="page hidden flex-col p-8 space-y-4">
+            <h2 class="text-2xl font-bold">Sign In</h2>
+            <input type="email" id="email" placeholder="Email" class="w-full p-4 border rounded-xl">
+            <input type="password" id="password" placeholder="Password" class="w-full p-4 border rounded-xl">
+            <button onclick="handleCustomerLogin()" class="w-full bg-yellow-600 text-white p-4 rounded-xl font-bold">Sign In</button>
+            <button onclick="showPage('register-page')" class="text-yellow-600 text-sm font-bold underline text-center pt-2">Click here to register</button>
+        </div>
+
+        <div id="register-page" class="page hidden flex-col p-8 space-y-4">
+    <h2 class="text-2xl font-bold">Register</h2>
+    <input type="text" id="reg-name" placeholder="Name" class="w-full p-4 border rounded-xl">
+    <input type="email" id="reg-email" placeholder="Email" class="w-full p-4 border rounded-xl">
+    <input type="tel" id="reg-phone" placeholder="Phone" class="w-full p-4 border rounded-xl">
+    <input type="text" id="reg-hotel" placeholder="Hotel or Villa Name" class="w-full p-4 border rounded-xl">
+    <input type="password" id="reg-pass" placeholder="Password" class="w-full p-4 border rounded-xl">
+    
+    <button onclick="saveNewUser()" class="w-full bg-slate-800 text-white p-4 rounded-xl font-bold">Create Account</button>
+    <button onclick="showPage('login-page')" class="text-slate-500 text-sm underline text-center pt-2">Back to Sign In</button>
+</div>
+
+        <div id="partner-login" class="page hidden flex-col p-8 space-y-4">
+            <h2 class="text-2xl font-bold">Partner Access</h2>
+            <input type="email" id="partner-email" placeholder="Business Email" class="w-full p-4 border rounded-xl">
+            <input type="password" id="partner-pass" placeholder="Password" class="w-full p-4 border rounded-xl">
+            <button type="button" onclick="handleLogin()" class="w-full bg-yellow-600 text-white p-4 rounded-xl font-bold">Sign In</button>            <div class="text-center pt-4">
+                <p class="text-sm text-slate-500">Δεν έχεις λογαριασμό;</p>
+                <button onclick="showPage('partner-register')" class="text-yellow-600 font-bold underline">Κάνε αίτηση για συνεργασία</button>
+            </div>
+        </div>
+
+        <div id="partner-register" class="page hidden flex-col p-8 space-y-4">
+            <h2 class="text-2xl font-bold">Partner Registration</h2>
+            <input type="text" id="partner-reg-name" placeholder="Business Name" class="w-full p-4 border rounded-xl">
+            <input type="email" id="partner-reg-email" placeholder="Business Email" class="w-full p-4 border rounded-xl">
+            <input type="tel" id="partner-reg-phone" placeholder="Phone" class="w-full p-4 border rounded-xl">
+            <input type="password" id="partner-reg-pass" placeholder="Password" class="w-full p-4 border rounded-xl">
+            <button onclick="handlePartnerRegister()" class="w-full bg-slate-800 text-white p-4 rounded-xl font-bold">Submit Request</button>
+            <button onclick="showPage('partner-login')" class="text-slate-500 text-sm underline text-center pt-2">Back to Sign In</button>
+        </div>
+
+        <div id="booking-form" class="page hidden flex-col p-8 space-y-4">
+            <h2 class="text-2xl font-bold">Κράτηση Υπηρεσίας</h2>
+            <input type="text" id="book-date" placeholder="Ημερομηνία" class="w-full p-4 border rounded-xl">
+            <input type="text" id="book-notes" placeholder="Σημειώσεις για τον συνεργάτη" class="w-full p-4 border rounded-xl">
+            <button onclick="submitBooking()" class="w-full bg-yellow-600 text-white p-4 rounded-xl font-bold">Υποβολή Κράτησης</button>
+            <button onclick="showPage('home-page')" class="text-slate-500 underline text-sm">Ακύρωση</button>
+        </div>
+
+       <div id="profile-page" class="page hidden flex-col p-8 bg-white min-h-screen">
+    <button onclick="showPage('home-page')" class="mb-4 text-slate-400 text-left hover:text-slate-600 transition">
+        <i class="fa-solid fa-arrow-left"></i> Back to Home
+    </button>
+    
+    <h2 id="u-name-header" class="text-4xl font-bold mb-8 text-slate-800 border-b pb-4"></h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-slate-50 p-6 rounded-2xl h-fit border">
+            <h3 class="font-bold text-lg mb-4 text-yellow-600">Customer Details</h3>
+            <div id="user-details" class="space-y-3 text-sm">
+                <p>Name: <span id="u-name" class="font-bold"></span></p>
+                <p>Email: <span id="u-email" class="font-bold"></span></p>
+                <p>Phone: <span id="u-phone" class="font-bold"></span></p>
+                <p>Hotel/Villa: <span id="u-hotel" class="font-bold"></span></p>
+            </div>
+            <div class="mt-6 flex gap-2">
+                <button onclick="editProfile()" id="edit-btn" class="flex-grow bg-slate-800 text-white py-2 rounded-lg text-xs font-bold hover:bg-slate-700 transition">Edit Profile</button>
+                <button onclick="logoutCustomer()" class="px-3 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-200 hover:bg-red-100 transition">
+                <i class="fa-solid fa-right-from-bracket"></i>
+        
+            </button>           </div>
+        </div>
+
+        <div class="md:col-span-2 space-y-8">
+            <div class="p-6 bg-slate-900 text-white rounded-2xl flex justify-between items-center shadow-lg">
+                <p class="text-lg">Total Spent</p>
+                <p id="total-spent" class="text-3xl font-bold text-yellow-500">0€</p>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg mb-4 text-slate-800">My Services</h3>
+                <div id="user-bookings-list" class="space-y-4"></div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg mb-4 text-slate-800">My Reviews</h3>
+                <div id="user-reviews-list" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="admin-approvals" class="page hidden min-h-screen bg-slate-50">
+    <div class="flex h-screen"> 
+        <nav id="sidebar" class="w-64 bg-slate-800 text-white p-6 flex flex-col gap-4 flex-shrink-0">
+            <h2 class="text-xl font-bold mb-6 text-yellow-500">Admin Panel</h2>
+            <button onclick="showAdminSection('customers')" class="w-full text-left py-2 hover:text-yellow-500">Πελάτες</button>
+            <button onclick="showAdminSection('partners')" class="w-full text-left py-2 hover:text-yellow-500">Συνεργάτες</button>
+            <button onclick="showAdminSection('services')" class="w-full text-left py-2 hover:text-yellow-500">Υπηρεσίες</button>
+            <button onclick="showAdminSection('bookings')" class="w-full text-left py-2 hover:text-yellow-500">Κρατήσεις</button>
+            <button onclick="showAdminSection('finance')" class="w-full text-left py-2 hover:text-yellow-500">Οικονομικά</button>
+            <button onclick="showPage('home-page')" class="mt-auto w-full text-left py-2 text-slate-400">Exit</button>
+        </nav>
+
+        <main id="admin-data-container" class="flex-1 p-8 overflow-y-auto">
+    <h2 id="admin-section-title" class="text-2xl font-bold mb-6">Επίλεξε κατηγορία</h2>
+    
+    <div id="customers-list" class="admin-view hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    <div id="partners-list" class="admin-view hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    <div id="services-list" class="admin-view hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    <div id="bookings-list" class="admin-view hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    <div id="finance-list" class="admin-view hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</main>
+    </div>
+</div> 
+     <div id="dashboard-view" class="admin-view hidden">
+    </div>
+        <footer class="mt-12 border-t pt-6 text-center text-sm text-slate-400 pb-6">
+            <div class="flex justify-center gap-4">
+                <a href="#" class="hover:underline">Terms of Use</a>
+                <span>|</span>
+                <a href="#" onclick="showPage('partner-login')" class="hover:underline">Partner Login</a>
+            </div>
+            <p class="mt-4">© 2026 EliteRhodes</p>
+        </footer>
+    </div>
+
+  <script src="js/admin.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/partner-logic.js"></script>
+
+    <div id="review-modal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Rate your experience</h3>
+            <select id="rev-rating" class="w-full p-2 border rounded-xl mb-4">
+                <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                <option value="4">⭐⭐⭐⭐ (Good)</option>
+                <option value="3">⭐⭐⭐ (Average)</option>
+                <option value="2">⭐⭐ (Poor)</option>
+                <option value="1">⭐ (Terrible)</option>
+            </select>
+            <textarea id="rev-text" class="w-full p-4 border rounded-xl mb-4" placeholder="Write your review..."></textarea>
+            <div class="flex gap-4">
+                <button onclick="closeReview()" class="flex-1 bg-slate-200 py-3 rounded-xl font-bold">Cancel</button>
+                <button onclick="submitReview()" class="flex-1 bg-yellow-600 text-white py-3 rounded-xl font-bold">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reply-modal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-md shadow-2xl">
+            <h3 class="text-xl font-bold mb-4">Απάντηση στον πελάτη</h3>
+            <textarea id="reply-text" class="w-full p-4 border rounded-xl mb-4" rows="4" placeholder="Γράψτε την απάντησή σας..."></textarea>
+            <div class="flex gap-4">
+                <button onclick="closeReply()" class="flex-1 bg-slate-200 py-3 rounded-xl font-bold">Άκυρο</button>
+                <button onclick="saveReply()" class="flex-1 bg-yellow-600 text-white py-3 rounded-xl font-bold">Αποστολή</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customer-modal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center p-4 z-[9999]">
+    <div class="bg-white p-8 rounded-2xl w-full max-w-sm shadow-2xl">
+        <h3 class="text-xl font-bold mb-4" id="modal-c-name">Στοιχεία Πελάτη</h3>
+        <div id="modal-c-details" class="space-y-2 text-slate-600"></div>
+        <button onclick="document.getElementById('customer-modal').classList.add('hidden')" 
+                class="w-full mt-6 bg-slate-800 text-white py-3 rounded-xl font-bold">Κλείσιμο</button>
+    </div>
+</div>
+<script>
+
+   window.onload = function() {
+    // 1. Τρέξε το dashboard αν υπάρχει το στοιχείο
+    if(document.getElementById('visual-partner-list')) {
+        loadAdminDashboard();
+    }
+
+    // 2. Τρέξε τους προορισμούς απευθείας (αν υπάρχει η συνάρτηση)
+    if(typeof renderDestinations === 'function') {
+        renderDestinations();
+    }
+};
+</script>
+<div id="dest-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-lg w-full">
+        <h2 id="modal-title" class="text-2xl font-bold mb-4"></h2>
+        <img id="modal-img" class="w-full h-48 object-cover rounded-xl mb-4">
+        <p id="modal-text" class="text-slate-600 mb-6"></p>
+        <button onclick="document.getElementById('dest-modal').classList.add('hidden')" class="bg-blue-600 text-white px-6 py-2 rounded-xl">Κλείσιμο</button>
+    </div>
+</div>
+<div id="dest-details-page" class="page p-8 bg-white min-h-screen">
+<button onclick="showDestinationsPage()" class="mb-4 text-slate-500 font-bold">⬅ Back</button>        
+    </button>
+    <div id="dest-content" class="p-8">
+        <h2 id="d-title" class="text-4xl font-bold"></h2>
+        <div id="d-gallery" class="grid grid-cols-2 gap-4"></div>
+        <p id="d-text" class="text-lg text-slate-700"></p>
+    </div>
+</div>
+<script>
+function renderProfile() {
+    console.log("Η renderProfile εκτελέστηκε!");
+    const session = JSON.parse(localStorage.getItem('customer_session'));
+    
+    if (session) {
+        // Αν υπάρχει session, ενημέρωσε τα πεδία και εμφάνισε το προφίλ
+        const elements = {
+            'u-name-header': session.name,
+            'u-name': session.name,
+            'u-email': session.email,
+            'u-phone': session.phone,
+            'u-hotel': session.hotel
+        };
+        
+        for (let id in elements) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = elements[id];
+        }
+        
+        showPage('profile-page');
+    } else {
+        // Αν δεν υπάρχει session, πήγαινε στο login
+        showPage('login-page');
+    }
+}
+</script>
+</div>
+</body>
+</html>
