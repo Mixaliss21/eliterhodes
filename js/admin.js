@@ -111,26 +111,28 @@ function deleteService(index) {
 }
 
 // --- ΚΡΑΤΗΣΕΙΣ ---
-function loadBookings() {
-    const container = document.getElementById('admin-data-container');
-    if (document.getElementById('admin-section-title')) {
-        document.getElementById('admin-section-title').innerText = "Διαχείριση Κρατήσεων";
-    }
-    
-    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-    container.innerHTML = '<h3 class="font-bold mb-4 col-span-2">Λίστα Κρατήσεων</h3>';
+// Στο main.js (πρέπει να είναι και αυτό type="module" στο index.html!)
+import { fetchBookings } from './data.js';
 
-    bookings.forEach((b, index) => {
-        const statusColor = b.status === 'Accepted' ? 'text-green-600' : (b.status === 'Declined' ? 'text-red-600' : 'text-yellow-600');
+async function loadBookings() {
+    const container = document.getElementById('admin-data-container');
+    container.innerHTML = '<p>Φόρτωση κρατήσεων από το Cloud...</p>';
+
+    const bookings = await fetchBookings();
+    
+    container.innerHTML = '<h2>Λίστα Κρατήσεων</h2>';
+    
+    if (bookings.length === 0) {
+        container.innerHTML += '<p>Δεν βρέθηκαν κρατήσεις.</p>';
+        return;
+    }
+
+    bookings.forEach(booking => {
         container.innerHTML += `
-            <div class="bg-white p-4 rounded-xl border shadow-sm">
-                <p class="font-bold">${b.serviceName || 'Υπηρεσία'}</p>
-                <p class="text-sm">Πελάτης: ${b.userName}</p>
-                <p class="font-bold ${statusColor}">Status: ${b.status || 'Pending'}</p>
-                <div class="mt-4 flex gap-2">
-                    <button onclick="updateBookingStatus(${index}, 'Accepted')" class="bg-green-600 text-white px-3 py-1 rounded text-xs">Αποδοχή</button>
-                    <button onclick="updateBookingStatus(${index}, 'Declined')" class="bg-red-600 text-white px-3 py-1 rounded text-xs">Απόρριψη</button>
-                </div>
+            <div class="booking-card">
+                <p><strong>Όνομα:</strong> ${booking.name || 'N/A'}</p>
+                <p><strong>Υπηρεσία:</strong> ${booking.service || 'N/A'}</p>
+                <p><strong>Status:</strong> ${booking.status}</p>
             </div>
         `;
     });
