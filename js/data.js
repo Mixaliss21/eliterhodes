@@ -23,10 +23,33 @@ const services = {
 };
 
 // Υπόλοιπες συναρτήσεις διαχείρισης
-function saveBooking(bookingData) {
-    let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-    bookings.push({ ...bookingData, id: Date.now(), status: 'Pending' });
-    localStorage.setItem('bookings', JSON.stringify(bookings));
+import { db } from './firebase-setup.js';
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+async function saveBooking(bookingData) {
+    try {
+        // Ετοιμάζουμε τα δεδομένα με status 'Pending'
+        const dataToSave = { 
+            ...bookingData, 
+            createdAt: new Date().toISOString(), 
+            status: 'Pending' 
+        };
+
+        // Αποστολή στο Firebase
+        console.log("Πάω να σώσω τα δεδομένα στο Firebase:", dataToSave);
+        const docRef = await addDoc(collection(db, "bookings"), dataToSave);
+        console.log("Το Firebase απάντησε, τα δεδομένα σώθηκαν!");
+        console.log("Η κράτηση αποθηκεύτηκε στο Cloud με ID: ", docRef.id);
+        alert("Η κράτηση στάλθηκε επιτυχώς!");
+        
+    } catch (e) {
+        console.error("Σφάλμα στο Cloud, αποθήκευση στο τοπικό backup: ", e);
+        // Backup αν δεν υπάρχει internet
+        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        bookings.push({ ...bookingData, id: Date.now(), status: 'Pending', local: true });
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+        alert("Η κράτηση αποθηκεύτηκε τοπικά (offline mode).");
+    }
 }
 
 function getAllBookings() {
@@ -247,4 +270,22 @@ function showDestDetails(id) {
     document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; });
     const target = document.getElementById('dest-details-page');
     if (target) { target.style.display = 'flex'; target.classList.add('active'); }
+}
+
+import { db } from './firebase-setup.js';
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+export async function fetchBookings() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "bookings"));
+        let bookings = [];
+        querySnapshot.forEach((doc) => {
+            // Προσθέτουμε τα δεδομένα μαζί με το ID του Firebase
+            bookings.push({ id: doc.id, ...doc.data() });
+        });
+        return bookings;
+    } catch (e) {
+        console.error("Σφάλμα κατά την ανάκτηση: ", e);
+        return [];
+    }
 }
